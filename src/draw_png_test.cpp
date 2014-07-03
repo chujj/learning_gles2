@@ -78,6 +78,7 @@ int Init(ESContext *esContext)
     GLuint tex = loadTexture(image_width, image_height, image_data);
     if (tex) {
     	userData->texure = tex;
+	free(image_data);
     } else {
     	printf("load tex fail\n");
 	return FALSE;
