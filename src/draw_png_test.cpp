@@ -17,12 +17,17 @@ GLuint loadTexture(int width, int height, GLubyte *image_data);
 
 typedef struct 
 {
-    // Handle to a program object
+    // paramaters from command line
+    char* vert_shader_file;
+    char* frag_shader_file;
+    char* objfile;
+    char* texture_png_file;
+
+    // gles related reference
     GLuint programObject;
     tinyobj::shape_t * shape;
     ESMatrix mMVPMatrix;
     GLuint texure;
-
     GLuint positionLoc, texCoordLoc, textUniformLoc;
 } UserData;
 
@@ -30,12 +35,12 @@ typedef struct
 // initialize the shader and program object
 int Init(ESContext *esContext) 
 {
-    UserData *userData = esContext->userData;
+    UserData *userData = (UserData *)esContext->userData;
     char * vert_shader_str;
     char * frag_shader_str;
     
-    sanshichuan::readFileInStr("vert.vert", &vert_shader_str);
-    sanshichuan::readFileInStr("frag.frag", &frag_shader_str);
+    sanshichuan::readFileInStr(userData->vert_shader_file, &vert_shader_str);
+    sanshichuan::readFileInStr(userData->frag_shader_file, &frag_shader_str);
 
     GLuint programObject;
     
@@ -62,7 +67,7 @@ int Init(ESContext *esContext)
     int image_width, image_height;
     bool image_has_alpha;
     GLubyte *image_data;
-    char* image_filename = "logo.png";
+    char* image_filename = userData->texture_png_file;
     if (loadPngImage(image_filename, image_width, image_height, image_has_alpha, &image_data)) {
 	printf("load png %s success: w: %d, h: %d, alpha?: %d\n", image_filename, image_width, image_height, image_has_alpha);
     } else {
@@ -90,7 +95,7 @@ int Init(ESContext *esContext)
 GLfloat sAngleCount;
 void Draw(ESContext *esContext)
 {
-    UserData *userData = esContext->userData;
+    UserData *userData = (UserData *)esContext->userData;
     ESMatrix modelMatrix;
     ESMatrix perspectMatrix;
 
@@ -351,15 +356,17 @@ int main(int argc, char *argv[])
     ESContext esContext;
     UserData userData;
 
-    char * filename;
-    if (argc == 1) {
-	filename = "triangle.obj";
-    } else {
-	filename = argv[1];
+    if (argc != (4 + 1)) {
+	printf("usage: ./draw_png_test objfile textpngfile vert_sharder_file frag_sharder_file\n");
+	return 0;
     }
-    std::cout << filename << std::endl;
 
-    std::string inputfile = filename;
+    userData.objfile = argv[1];
+    userData.texture_png_file = argv[2];
+    userData.vert_shader_file = argv[3];
+    userData.frag_shader_file = argv[4];
+
+    std::string inputfile = userData.objfile;
     std::vector<tinyobj::shape_t> shapes;
   
     std::string err = tinyobj::LoadObj(shapes, inputfile.c_str());
