@@ -26,53 +26,7 @@ typedef struct
     GLuint positionLoc, texCoordLoc, textUniformLoc;
 } UserData;
 
-///
-// create a shader object, load the shader source, and
-// compile the shader.
-GLuint LoadShader(GLenum type, const char *shaderSrc) 
-{
-    GLuint shader;
-    GLint compiled;
 
-    // create the shader object
-    shader = glCreateShader(type);
-
-    if (shader == 0) {
-	return 0;
-    }
-
-    // load the shader source
-    glShaderSource(shader, 1, &shaderSrc, NULL);
-
-    // compile the shader
-    glCompileShader(shader);
-
-    // check the compile status
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-
-    if (!compiled) {
-	GLint infoLen = 0;
-
-	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
-
-	if (infoLen > 1) {
-	    char * infoLog = malloc(sizeof(char) * infoLen);
-	    esLogMessage("ERROR compiling shader:\n%s\n", infoLog);
-	    free(infoLog);
-	}
-
-	glDeleteShader(shader);
-	return 0;
-    }
-
-    
-
-    return shader;
-    
-}
-
-
-///
 // initialize the shader and program object
 int Init(ESContext *esContext) 
 {
@@ -83,52 +37,13 @@ int Init(ESContext *esContext)
     sanshichuan::readFileInStr("vert.vert", &vert_shader_str);
     sanshichuan::readFileInStr("frag.frag", &frag_shader_str);
 
-    GLuint vertexShader;
-    GLuint fragmentShader;
     GLuint programObject;
-    GLint linked;
-
-    // load the vertext/fragment shaders
-    vertexShader = LoadShader(GL_VERTEX_SHADER, vert_shader_str);
-    fragmentShader = LoadShader(GL_FRAGMENT_SHADER, frag_shader_str);
-
+    
     // create the program object
-    programObject = glCreateProgram();
+    programObject = esLoadProgram(vert_shader_str, frag_shader_str);
 
     if (programObject == 0) {
 	return 0;
-    }
-
-    glAttachShader(programObject, vertexShader);
-    glAttachShader(programObject, fragmentShader);
-
-    // //Bind vPosition to attribute 0
-    // glBindAttribLocation(programObject, 0, "vPosition");
-    
-    // link the program
-    glLinkProgram(programObject);
-
-    // check the link status
-    glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
-
-    if (!linked) {
-	GLint infoLen = 0;
-
-	glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &linked);
-
-	if (infoLen > 1) {
-	    char* infoLog = malloc(sizeof(char) *infoLen);
-
-	    glGetProgramInfoLog(programObject,
-				infoLen, NULL,
-				infoLog);
-	    esLogMessage("ERROR linking program:\n%s\n", infoLog);
-
-	    free(infoLog);
-	}
-
-	glDeleteProgram(programObject);
-	return FALSE;
     }
 
     // STORE the program object
@@ -142,11 +57,6 @@ int Init(ESContext *esContext)
     userData->textUniformLoc = glGetUniformLocation ( userData->programObject, "s_texture" );
 
     printf("posLoc: %d ; texCoorLoc: %d; text: %d\n", userData->positionLoc, userData->texCoordLoc, userData->textUniformLoc);
-
-    // int position = glGetAttribLocation(programObject, "vPosition");
-    // std::cout << "position at: " << position << std::endl;
-    // position = glGetUniformLocation(programObject, "uModelMatrix");
-    // std::cout << "uniform modelmatrix at: " << position << std::endl;
 
     // load images
     int image_width, image_height;
@@ -183,12 +93,6 @@ void Draw(ESContext *esContext)
     UserData *userData = esContext->userData;
     ESMatrix modelMatrix;
     ESMatrix perspectMatrix;
-    
-    GLfloat vVertices[] = {
-	0.0f, 0.5f, 0.0f,
-	-0.5f, -0.5f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-    };
 
     // set the viewpoint
     glViewport(0,0, esContext->width, esContext->height);
@@ -246,7 +150,6 @@ void Draw(ESContext *esContext)
     
     eglSwapBuffers(esContext->eglDisplay, esContext->eglSurface);
 }
-
 
 void dumpShapes(std::vector<tinyobj::shape_t> &shapes)
 {
@@ -484,7 +387,3 @@ int main(int argc, char *argv[])
 }
 
 }
-
-
-
-
