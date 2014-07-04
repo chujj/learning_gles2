@@ -51,6 +51,8 @@ int Init(ESContext *esContext)
 	return 0;
     }
 
+    glEnable(GL_CULL_FACE);
+    
     // STORE the program object
     userData->programObject = programObject;
 
