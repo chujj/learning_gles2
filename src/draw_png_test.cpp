@@ -52,6 +52,8 @@ int Init(ESContext *esContext)
     }
 
     glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    
     
     // STORE the program object
     userData->programObject = programObject;
@@ -120,7 +122,7 @@ void Draw(ESContext *esContext)
     // model matrix
     esMatrixLoadIdentity(&modelMatrix);
     esTranslate(&modelMatrix, 0.0, 0.0, -9.0);
-    esRotate(&modelMatrix, sAngleCount, 1.0, 0.0, 1.0);
+   esRotate(&modelMatrix, sAngleCount, 1.0, 1.0, 1.0);
 
     // project matirx
     esMatrixLoadIdentity(&perspectMatrix);
