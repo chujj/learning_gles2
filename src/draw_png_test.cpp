@@ -54,6 +54,8 @@ int Init(ESContext *esContext)
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glClearDepthf(1.0f);
     
     
     // STORE the program object
@@ -90,7 +92,7 @@ int Init(ESContext *esContext)
     }
 
     // world color
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     return TRUE;
 }
@@ -109,7 +111,7 @@ void Draw(ESContext *esContext)
     glViewport(0,0, esContext->width, esContext->height);
 
     // clear the color buffer
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // USe the program object
     glUseProgram(userData->programObject);
@@ -123,7 +125,7 @@ void Draw(ESContext *esContext)
     // model matrix
     esMatrixLoadIdentity(&modelMatrix);
     esTranslate(&modelMatrix, 0.0, 0.0, -9.0);
-   esRotate(&modelMatrix, sAngleCount, 1.0, 1.0, 1.0);
+    esRotate(&modelMatrix, sAngleCount, 0.0, 0.0, 1.0);
 
     // project matirx
     esMatrixLoadIdentity(&perspectMatrix);
@@ -134,7 +136,8 @@ void Draw(ESContext *esContext)
     esMatrixMultiply(&userData->mMVPMatrix, &modelMatrix, &perspectMatrix);
     
     // load the vertex data
-    for (int i = 0; i < userData->shapes->size(); ++i) {
+//    for (int i = ((userData->shapes->size()) - 1); i >=0; --i) {
+    for (int i = 0; i < ((userData->shapes->size())); ++i) {
 	tinyobj::mesh_t mesh = (userData->shapes->at(i)).mesh;
 	
 	std::vector<float> pos = mesh.positions;
@@ -391,7 +394,7 @@ int main(int argc, char *argv[])
     esInitContext(&esContext);
     esContext.userData = &userData;
      
-    esCreateWindow(&esContext, "ZHUJJ First GLES2 demo", 400, 400, ES_WINDOW_RGB);
+    esCreateWindow(&esContext, "ZHUJJ First GLES2 demo", 400, 400, ES_WINDOW_RGB | ES_WINDOW_DEPTH);
 
     if (!Init(&esContext)) {
 	return 0;
