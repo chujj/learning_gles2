@@ -15,6 +15,32 @@ bool loadPngImage(char *name, int &outWidth, int &outHeight, bool &outHasAlpha, 
 GLuint loadTexture(int width, int height, GLubyte *image_data);
 
 
+class Earth_Universe_Rotate_Loc_Speed
+{
+    
+public:
+    
+    Earth_Universe_Rotate_Loc_Speed(GLfloat a_delta_angle,
+				    GLfloat a_dx = 0, GLfloat a_dy = 0, GLfloat a_dz = 0,
+				    GLfloat a_delta_max = 360.0f)
+	: delta_angle(a_delta_angle), dx(a_dx), dy(a_dy), dz(a_dz), delta_max(a_delta_max)
+	{}
+
+    void nextframe() {
+	angle += delta_angle;
+	angle = (angle > delta_max ? 0 : angle);
+    }
+    
+    GLfloat dx, dy , dz;
+    GLfloat angle;
+
+private:
+    GLfloat delta_angle;
+    GLfloat delta_max;
+};
+
+    
+
 typedef struct 
 {
     // paramaters from command line
@@ -26,7 +52,7 @@ typedef struct
     // gles related reference
     GLuint programObject;
     std::vector<tinyobj::shape_t> * shapes;
-//    tinyobj::shape_t * shape;
+    std::vector<Earth_Universe_Rotate_Loc_Speed *> * speeds;
     ESMatrix mMVPMatrix;
     GLuint texure;
     GLuint positionLoc, texCoordLoc, textUniformLoc;
@@ -115,31 +141,28 @@ void Draw(ESContext *esContext)
 
     // USe the program object
     glUseProgram(userData->programObject);
-
-    if (sAngleCount ++ > 360) {
-	sAngleCount = 0;
-    }
-
-//    std::cout << "degree " << sAngleCount << std::endl;
-
-    // model matrix
-    esMatrixLoadIdentity(&modelMatrix);
-    esTranslate(&modelMatrix, 0.0, 0.0, -9.0);
-    esRotate(&modelMatrix, sAngleCount, 0.0, 0.0, 1.0);
-
-    // project matirx
-    esMatrixLoadIdentity(&perspectMatrix);
-    esFrustum(&perspectMatrix, -1, 1, -1, 1, 3, 30);
+    
+    for (int i = 0; i < ((userData->shapes->size()) - 1); ++i) {
+	// model matrix
+	esMatrixLoadIdentity(&modelMatrix);
+	printf("%2f, %2f, %2f, %2f\n", userData->speeds->at(i)->angle, userData->speeds->at(i)->dx, userData->speeds->at(i)->dy, userData->speeds->at(i)->dz);
+	
+	esRotate(&modelMatrix, userData->speeds->at(i)->angle, userData->speeds->at(i)->dx, userData->speeds->at(i)->dy, userData->speeds->at(i)->dz);
+	userData->speeds->at(i)->nextframe();
+	
+	
+	// project matirx
+	esMatrixLoadIdentity(&perspectMatrix);
+	esFrustum(&perspectMatrix, -1, 1, -1, 1, 3, 30);
 //    float aspect = (GLfloat) esContext->width / (GLfloat) esContext->height;
 //    esPerspective(&perspectMatrix, 60.0f, aspect, -0, -0.3);
 
-    esMatrixMultiply(&userData->mMVPMatrix, &modelMatrix, &perspectMatrix);
-    
-    // load the vertex data
-//    for (int i = ((userData->shapes->size()) - 1); i >=0; --i) {
-    for (int i = 0; i < ((userData->shapes->size())); ++i) {
+	esMatrixLoadIdentity(&userData->mMVPMatrix);
+	esMatrixMultiply(&userData->mMVPMatrix, &modelMatrix, &perspectMatrix);
+
 	tinyobj::mesh_t mesh = (userData->shapes->at(i)).mesh;
 	
+	// load the vertex data
 	std::vector<float> pos = mesh.positions;
 	glVertexAttribPointer(userData->positionLoc, 3, GL_FLOAT, GL_FALSE, 0, pos.data());
 	glEnableVertexAttribArray(userData->positionLoc);
@@ -387,6 +410,23 @@ int main(int argc, char *argv[])
     if (!err.empty()) {
       std::cerr << err << std::endl;
       exit(1);
+    }
+
+    // init speed
+    std::vector<Earth_Universe_Rotate_Loc_Speed *> speed(shapes.size());
+    userData.speeds = &speed;
+    for (int i = 0; i < shapes.size(); ++i) {
+    	if (shapes[i].name.find("earth") == 0) {
+    	    Earth_Universe_Rotate_Loc_Speed spd(1, 0, 1, 0);
+	    speed[i] = &spd;
+    	} else if (shapes[i].name.find("universe") == 0) {
+    	    Earth_Universe_Rotate_Loc_Speed spd(1, 1, 0, 0);
+	    speed[i] = &spd;
+    	} else {
+    	    printf ("name not support %s\n", shapes[i].name.c_str());
+    	    exit(255);
+    	}
+	
     }
 
     userData.shapes = &shapes;
