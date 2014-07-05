@@ -1,8 +1,9 @@
 #include "draw_earth.hpp"
 
-namespace {
+
 
 #ifndef SANSHICHUAN_ANDROID_BUILD
+namespace {
 int Init(ESContext *esContext)
 {
     UserData *userData = (UserData *)esContext->userData;
@@ -174,7 +175,9 @@ void Draw(UserData *userData)
 #endif
 }
 
-}
+#ifndef SANSHICHUAN_ANDROID_BUILD
+} // namespace
+#endif
 
 
 #ifndef SANSHICHUAN_ANDROID_BUILD

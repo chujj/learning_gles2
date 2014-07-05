@@ -8,7 +8,6 @@
 #include <vector>
 #include "read.hpp"
 
-namespace {
 class Earth_Universe_Rotate_Loc_Speed
 {
     
@@ -53,14 +52,16 @@ typedef struct
 
 
 #ifndef SANSHICHUAN_ANDROID_BUILD
+namespace {
 int  Init(ESContext *esContext);
 void  Draw(ESContext *esContext);
+}
 
 #else
+
 int  Init(UserData *userData);
 void  Draw(UserData *userData);
+#endif /* SANSHICHUAN_ANDROID_BUILD */
 
-#endif /* ANDROID_BUILD */
 
-}
 #endif /* _EARTH_H_ */

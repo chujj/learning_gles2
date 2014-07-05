@@ -4,7 +4,7 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
-//#include "draw_earth.hpp"
+#include "draw_earth.hpp"
 
 #define  LOG_TAG    "libgl2jni"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
@@ -21,13 +21,21 @@ void ESUTIL_API esLogMessage ( const char *formatStr, ... )
 LOGE("log printer, need to implement");
 }
 
+UserData * kUserData;
 
 bool setupGraphics(int w, int h) 
 {
+    kUserData = (UserData *) malloc (sizeof(UserData));
+    memset(kUserData, 0, sizeof(UserData));
+    Init(kUserData);
+    
 }
 
 void renderFrame() 
 {
+    if (kUserData) {
+	Draw(kUserData);
+    }
 }
 
 extern "C" {

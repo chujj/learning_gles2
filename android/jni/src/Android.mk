@@ -18,8 +18,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libgl2jni
 LOCAL_CFLAGS    := -Werror -DSANSHICHUAN_ANDROID_BUILD
-LOCAL_SRC_FILES := gl_code.cpp \
-draw_earth.cpp \
+LOCAL_SRC_FILES := draw_earth.cpp \
 gesture_interaction.hpp \
 read.hpp \
 esShader.c \
@@ -27,7 +26,8 @@ esShapes.c \
 esTransform.c \
 esUtil.c \
 read.cpp \
-tiny_obj_loader.cc
+tiny_obj_loader.cc \
+gl_code.cpp
 
 
 
