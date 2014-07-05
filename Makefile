@@ -27,6 +27,7 @@ earth.android: ${COMMONSRC} ${COMMONHRD} ${TINY_OBJ_LOADER_SRC} ${SRC} ./earth/d
 	cp ${COMMONSRC} ${COMMONHRD} ${TINY_OBJ_LOADER_SRC} ${SRC} android/jni/src
 	cp include/* android/jni/src
 	cp ./earth/draw_earth.cpp ./earth/draw_earth.hpp android/jni/src
+	cp ./earth/earth_universe.obj ./earth/earth_universe.png ./earth/vert.vert ./earth/frag.frag android/res
 	(cd android ; ndk-build)
 
 earth.android.clean:
