@@ -43,7 +43,7 @@ libcommon.a: ${COMMONSRC} ${COMMONHRD}
 clean: dest-clean
 
 
-dest-clean:
+dest-clean: earth.android.clean
 	find ./ -name '*.a' -exec rm {} -rf \;
 	find ./ -name '*.o' -exec rm {} -rf \;
 	find ./ -name '*.bin' -exec rm {} -rf \;
