@@ -97,6 +97,38 @@ int Init(ESContext *esContext)
 
     printf("posLoc: %d ; texCoorLoc: %d; text: %d\n", userData->positionLoc, userData->texCoordLoc, userData->textUniformLoc);
 
+    // load obj
+    std::string inputfile = userData->objfile;
+    printf("obj filename: %s\n", inputfile.c_str());
+    std::vector<tinyobj::shape_t> * shapes_p = 
+	new std::vector<tinyobj::shape_t>();
+    std::vector<tinyobj::shape_t> &shapes = *shapes_p;
+
+    std::string err = tinyobj::LoadObj(shapes, inputfile.c_str());
+    if (!err.empty()) {
+      std::cerr << err << std::endl;
+      exit(1);
+    }
+    userData->shapes = shapes_p;
+
+    // init speed
+    std::vector<Earth_Universe_Rotate_Loc_Speed *> * speed_p =
+	new std::vector<Earth_Universe_Rotate_Loc_Speed *>(shapes.size());
+    std::vector<Earth_Universe_Rotate_Loc_Speed *> &speed = *speed_p;
+
+    userData->speeds = speed_p;
+    for (int i = 0; i < shapes.size(); ++i) {
+    	if (shapes[i].name.find("earth") == 0) {
+	    speed[i] = new Earth_Universe_Rotate_Loc_Speed(0.3, -9, 0, 1, 0);
+    	} else if (shapes[i].name.find("universe") == 0) {
+	    speed[i] = new Earth_Universe_Rotate_Loc_Speed (0.001, -19, 1, 1, 1);
+    	} else {
+    	    printf ("name not support %s\n", shapes[i].name.c_str());
+    	    exit(255);
+    	}
+	
+    }
+
     // load images
     int image_width, image_height;
     bool image_has_alpha;
@@ -402,34 +434,6 @@ int main(int argc, char *argv[])
     userData.vert_shader_file = argv[3];
     userData.frag_shader_file = argv[4];
 
-    std::string inputfile = userData.objfile;
-    std::vector<tinyobj::shape_t> shapes;
-  
-    std::string err = tinyobj::LoadObj(shapes, inputfile.c_str());
-  
-    if (!err.empty()) {
-      std::cerr << err << std::endl;
-      exit(1);
-    }
-
-    // init speed
-    std::vector<Earth_Universe_Rotate_Loc_Speed *> speed(shapes.size());
-    userData.speeds = &speed;
-    for (int i = 0; i < shapes.size(); ++i) {
-    	if (shapes[i].name.find("earth") == 0) {
-    	    Earth_Universe_Rotate_Loc_Speed spd(0.3, -9, 0, 1, 0);
-	    speed[i] = &spd;
-    	} else if (shapes[i].name.find("universe") == 0) {
-    	    Earth_Universe_Rotate_Loc_Speed spd(0.001, -19, 1, 1, 1);
-	    speed[i] = &spd;
-    	} else {
-    	    printf ("name not support %s\n", shapes[i].name.c_str());
-    	    exit(255);
-    	}
-	
-    }
-
-    userData.shapes = &shapes;
 
     esInitContext(&esContext);
     esContext.userData = &userData;

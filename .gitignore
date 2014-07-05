@@ -4,3 +4,6 @@ cscope*
 *.bin
 bin
 gen
+obj
+armeabi
+
