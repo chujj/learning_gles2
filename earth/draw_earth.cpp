@@ -417,10 +417,10 @@ int main(int argc, char *argv[])
     userData.speeds = &speed;
     for (int i = 0; i < shapes.size(); ++i) {
     	if (shapes[i].name.find("earth") == 0) {
-    	    Earth_Universe_Rotate_Loc_Speed spd(1, -9, 0, 1, 0);
+    	    Earth_Universe_Rotate_Loc_Speed spd(0.3, -9, 0, 1, 0);
 	    speed[i] = &spd;
     	} else if (shapes[i].name.find("universe") == 0) {
-    	    Earth_Universe_Rotate_Loc_Speed spd(0.01, -19, 1, 1, 1);
+    	    Earth_Universe_Rotate_Loc_Speed spd(0.001, -19, 1, 1, 1);
 	    speed[i] = &spd;
     	} else {
     	    printf ("name not support %s\n", shapes[i].name.c_str());
