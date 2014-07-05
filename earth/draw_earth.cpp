@@ -20,10 +20,10 @@ class Earth_Universe_Rotate_Loc_Speed
     
 public:
     
-    Earth_Universe_Rotate_Loc_Speed(GLfloat a_delta_angle,
+    Earth_Universe_Rotate_Loc_Speed(GLfloat a_delta_angle, GLfloat a_translate_z,
 				    GLfloat a_dx = 0, GLfloat a_dy = 0, GLfloat a_dz = 0,
 				    GLfloat a_delta_max = 360.0f)
-	: delta_angle(a_delta_angle), dx(a_dx), dy(a_dy), dz(a_dz), delta_max(a_delta_max)
+	: delta_angle(a_delta_angle), translate_z(a_translate_z), dx(a_dx), dy(a_dy), dz(a_dz), delta_max(a_delta_max)
 	{}
 
     void nextframe() {
@@ -33,6 +33,7 @@ public:
     
     GLfloat dx, dy , dz;
     GLfloat angle;
+    GLfloat translate_z;
 
 private:
     GLfloat delta_angle;
@@ -142,14 +143,13 @@ void Draw(ESContext *esContext)
     // USe the program object
     glUseProgram(userData->programObject);
     
-    for (int i = 0; i < ((userData->shapes->size()) - 1); ++i) {
+    for (int i = 0; i < ((userData->shapes->size())); ++i) {
 	// model matrix
 	esMatrixLoadIdentity(&modelMatrix);
-	printf("%2f, %2f, %2f, %2f\n", userData->speeds->at(i)->angle, userData->speeds->at(i)->dx, userData->speeds->at(i)->dy, userData->speeds->at(i)->dz);
-	
+
+	esTranslate(&modelMatrix, 0, 0, userData->speeds->at(i)->translate_z);
 	esRotate(&modelMatrix, userData->speeds->at(i)->angle, userData->speeds->at(i)->dx, userData->speeds->at(i)->dy, userData->speeds->at(i)->dz);
 	userData->speeds->at(i)->nextframe();
-	
 	
 	// project matirx
 	esMatrixLoadIdentity(&perspectMatrix);
@@ -417,10 +417,10 @@ int main(int argc, char *argv[])
     userData.speeds = &speed;
     for (int i = 0; i < shapes.size(); ++i) {
     	if (shapes[i].name.find("earth") == 0) {
-    	    Earth_Universe_Rotate_Loc_Speed spd(1, 0, 1, 0);
+    	    Earth_Universe_Rotate_Loc_Speed spd(1, -9, 0, 1, 0);
 	    speed[i] = &spd;
     	} else if (shapes[i].name.find("universe") == 0) {
-    	    Earth_Universe_Rotate_Loc_Speed spd(1, 1, 0, 0);
+    	    Earth_Universe_Rotate_Loc_Speed spd(0.01, -19, 1, 1, 1);
 	    speed[i] = &spd;
     	} else {
     	    printf ("name not support %s\n", shapes[i].name.c_str());
