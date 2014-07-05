@@ -12,5 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+LOCAL_PATH:= $(call my-dir)
 
-include $(all-subdir-makefiles)
+include $(CLEAR_VARS)
+
+LOCAL_MODULE    := libgl2jni
+LOCAL_CFLAGS    := -Werror
+LOCAL_SRC_FILES := gl_code.cpp
+LOCAL_LDLIBS    := -llog -lGLESv2 -lz
+LOCAL_WHOLE_STATIC_LIBRARIES := libpng
+
+include $(BUILD_SHARED_LIBRARY)
+
