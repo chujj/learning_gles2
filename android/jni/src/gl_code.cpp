@@ -15,6 +15,13 @@ static void printGLString(const char *name, GLenum s) {
     LOGI("GL %s = %s\n", name, v);
 }
 
+#include "esUtil.h"
+void ESUTIL_API esLogMessage ( const char *formatStr, ... ) 
+{
+LOGE("log printer, need to implement");
+}
+
+
 bool setupGraphics(int w, int h) 
 {
 }

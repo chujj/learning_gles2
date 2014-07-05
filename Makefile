@@ -20,8 +20,17 @@ all: earth.bin
 draw_png_test: libcommon.a ${TINY_OBJ_LOADER_SRC} ${SRC} ./src/draw_png_test.cpp
 	g++ -g -fpermissive ${INCDIR} ${LIBS}  ${TINY_OBJ_LOADER_SRC} ${SRC} ./src/draw_png_test.cpp libcommon.a -o $@ 
 
-earth.bin: libcommon.a ${TINY_OBJ_LOADER_SRC} ${SRC} ./earth/draw_earth.cpp
+earth.bin: libcommon.a ${TINY_OBJ_LOADER_SRC} ${SRC} ./earth/draw_earth.cpp ./earth/draw_earth.hpp
 	g++ -g -fpermissive ${INCDIR} ${LIBS}  ${TINY_OBJ_LOADER_SRC} ${SRC} ./earth/draw_earth.cpp libcommon.a -o earth.bin
+
+earth.android: ${COMMONSRC} ${COMMONHRD} ${TINY_OBJ_LOADER_SRC} ${SRC} ./earth/draw_earth.cpp ./earth/draw_earth.hpp
+	cp ${COMMONSRC} ${COMMONHRD} ${TINY_OBJ_LOADER_SRC} ${SRC} android/jni/src
+	cp include/* android/jni/src
+	cp ./earth/draw_earth.cpp ./earth/draw_earth.hpp android/jni/src
+	(cd android ; ndk-build)
+
+earth.android.clean:
+	(cd android; ndk-build clean)
 
 earth: earth.bin
 	./earth.bin earth/earth_universe.obj earth/earth_universe.png earth/vert.vert earth/frag.frag

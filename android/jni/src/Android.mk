@@ -17,8 +17,20 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libgl2jni
-LOCAL_CFLAGS    := -Werror
-LOCAL_SRC_FILES := gl_code.cpp
+LOCAL_CFLAGS    := -Werror -DSANSHICHUAN_ANDROID_BUILD
+LOCAL_SRC_FILES := gl_code.cpp \
+draw_earth.cpp \
+gesture_interaction.hpp \
+read.hpp \
+esShader.c \
+esShapes.c \
+esTransform.c \
+esUtil.c \
+read.cpp \
+tiny_obj_loader.cc
+
+
+
 LOCAL_LDLIBS    := -llog -lGLESv2 -lz
 LOCAL_WHOLE_STATIC_LIBRARIES := libpng
 
