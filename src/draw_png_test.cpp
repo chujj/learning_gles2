@@ -25,7 +25,8 @@ typedef struct
 
     // gles related reference
     GLuint programObject;
-    tinyobj::shape_t * shape;
+    std::vector<tinyobj::shape_t> * shapes;
+//    tinyobj::shape_t * shape;
     ESMatrix mMVPMatrix;
     GLuint texure;
     GLuint positionLoc, texCoordLoc, textUniformLoc;
@@ -133,30 +134,34 @@ void Draw(ESContext *esContext)
     esMatrixMultiply(&userData->mMVPMatrix, &modelMatrix, &perspectMatrix);
     
     // load the vertex data
-    tinyobj::mesh_t mesh = userData->shape->mesh;
-    std::vector<float> pos = mesh.positions;
-    glVertexAttribPointer(userData->positionLoc, 3, GL_FLOAT, GL_FALSE, 0, pos.data());
-    glEnableVertexAttribArray(userData->positionLoc);
+    for (int i = 0; i < userData->shapes->size(); ++i) {
+	tinyobj::mesh_t mesh = (userData->shapes->at(i)).mesh;
+	
+	std::vector<float> pos = mesh.positions;
+	glVertexAttribPointer(userData->positionLoc, 3, GL_FLOAT, GL_FALSE, 0, pos.data());
+	glEnableVertexAttribArray(userData->positionLoc);
 
-    // load texCoord data
-    glVertexAttribPointer(userData->texCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, mesh.texcoords.data());
-    glEnableVertexAttribArray(userData->texCoordLoc);
+	// load texCoord data
+	glVertexAttribPointer(userData->texCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, mesh.texcoords.data());
+	glEnableVertexAttribArray(userData->texCoordLoc);
 
-    // load the MVP matrix
-    glUniformMatrix4fv(
-	glGetUniformLocation(userData->programObject, "uModelMatrix"), 1, false, (GLfloat*)&userData->mMVPMatrix);
+	// load the MVP matrix
+	glUniformMatrix4fv(
+	    glGetUniformLocation(userData->programObject, "uModelMatrix"), 1, false, (GLfloat*)&userData->mMVPMatrix);
 
-    /// load the texture
-    // Bind the texture
-    glActiveTexture ( GL_TEXTURE0 );
-    glBindTexture ( GL_TEXTURE_2D, userData->texure );
-    
-    // Set the sampler texture unit to 0
-    glUniform1i ( userData->textUniformLoc, 0 );
-
-    
+	/// load the texture
+	// Bind the texture
+	glActiveTexture ( GL_TEXTURE0 );
+	glBindTexture ( GL_TEXTURE_2D, userData->texure );
+	
+	// Set the sampler texture unit to 0
+	glUniform1i ( userData->textUniformLoc, 0 );
+	
+	
 //    glDrawArrays(GL_TRIANGLES, 0, gVertices.size());
-    glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, mesh.indices.data());
+	glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, mesh.indices.data());
+    }
+
     
     eglSwapBuffers(esContext->eglDisplay, esContext->eglSurface);
 }
@@ -381,7 +386,7 @@ int main(int argc, char *argv[])
       exit(1);
     }
 
-    userData.shape = &shapes[0];
+    userData.shapes = &shapes;
 
     esInitContext(&esContext);
     esContext.userData = &userData;
