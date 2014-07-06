@@ -23,15 +23,17 @@ LOGE("log printer, need to implement");
 
 UserData * kUserData;
 
-bool setupGraphics(int w, int h) 
+bool setupGraphics(JNIEnv * env, jstring obj_file, jstring tex_png_file, jstring vert, jstring frag,int w, int h) 
 {
     kUserData = (UserData *) malloc (sizeof(UserData));
     memset(kUserData, 0, sizeof(UserData));
-    kUserData->vert_shader_file = "/sdcard/earth/vert.vert";
-    kUserData->frag_shader_file= "/sdcard/earth/frag.frag";
-    kUserData->texture_png_file= "/sdcard/earth/earth_universe.png";
-    kUserData->objfile= "/sdcard/earth/earth_universe.obj";
+    jboolean copy = true;
     
+    kUserData->objfile= env->GetStringUTFChars(obj_file, &copy);
+    kUserData->texture_png_file= env->GetStringUTFChars(tex_png_file, &copy);
+    kUserData->vert_shader_file = env->GetStringUTFChars(vert, &copy);
+    kUserData->frag_shader_file= env->GetStringUTFChars(frag, &copy);
+
     Init(kUserData);
     
 }
@@ -44,13 +46,19 @@ void renderFrame()
 }
 
 extern "C" {
-    JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,  jint width, jint height);
+    JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,
+							      jstring obj_file, jstring tex_png_file,
+							      jstring vert, jstring frag,
+								  jint width, jint height);
     JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv * env, jobject obj);
 };
 
-JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,  jint width, jint height)
+JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,
+							      jstring obj_file, jstring tex_png_file,
+							      jstring vert, jstring frag,
+							      jint width, jint height)
 {
-    setupGraphics(width, height);
+    setupGraphics(env, obj_file, tex_png_file, vert, frag, width, height);
 }
 
 JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv * env, jobject obj)

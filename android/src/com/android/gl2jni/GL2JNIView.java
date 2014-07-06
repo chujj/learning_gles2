@@ -33,6 +33,7 @@ package com.android.gl2jni;
 
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
@@ -323,13 +324,19 @@ class GL2JNIView extends GLSurfaceView {
         private int[] mValue = new int[1];
     }
 
-    private static class Renderer implements GLSurfaceView.Renderer {
+    private class Renderer implements GLSurfaceView.Renderer {
         public void onDrawFrame(GL10 gl) {
             GL2JNILib.step();
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
-            GL2JNILib.init(width, height);
+        	AssetManager am = GL2JNIView.this.getContext().getAssets();
+        	Context ctx = GL2JNIView.this.getContext();
+        	String obj = AssetHelper.copyAssetToSDRAM(ctx , am, "earth_universe.obj");
+        	String tex_png = AssetHelper.copyAssetToSDRAM(ctx , am, "earth_universe.png");
+        	String vert = AssetHelper.copyAssetToSDRAM(ctx , am, "vert.vert");
+        	String frag = AssetHelper.copyAssetToSDRAM(ctx , am, "frag.frag");
+            GL2JNILib.init(obj, tex_png, vert, frag, width, height);
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
