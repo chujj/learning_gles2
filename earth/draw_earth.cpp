@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
     esInitContext(&esContext);
     esContext.userData = &userData;
      
-    esCreateWindow(&esContext, "ZHUJJ First GLES2 demo", 400, 400, ES_WINDOW_RGB | ES_WINDOW_DEPTH);
+    esCreateWindow(&esContext, "Earth_Universe", 400, 400, ES_WINDOW_RGB | ES_WINDOW_DEPTH);
 
     if (!Init(&esContext)) {
 	return 0;
