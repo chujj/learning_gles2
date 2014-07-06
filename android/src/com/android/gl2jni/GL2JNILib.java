@@ -28,6 +28,6 @@ public class GL2JNILib {
      * @param width the current view width
      * @param height the current view height
      */
-     public static native void init(String obj, String tex, String vert, String frag, int width, int height);
-     public static native void step();
+     public static native int init(String obj, String tex, String vert, String frag, int width, int height);
+     public static native void step(int nativeContext);
 }

@@ -325,8 +325,11 @@ class GL2JNIView extends GLSurfaceView {
     }
 
     private class Renderer implements GLSurfaceView.Renderer {
+    	private int mNativeContext;
+    	
         public void onDrawFrame(GL10 gl) {
-            GL2JNILib.step();
+        	if (mNativeContext != 0)
+        		GL2JNILib.step(mNativeContext);
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -336,7 +339,7 @@ class GL2JNIView extends GLSurfaceView {
         	String tex_png = AssetHelper.copyAssetToSDRAM(ctx , am, "earth_universe.png");
         	String vert = AssetHelper.copyAssetToSDRAM(ctx , am, "vert.vert");
         	String frag = AssetHelper.copyAssetToSDRAM(ctx , am, "frag.frag");
-            GL2JNILib.init(obj, tex_png, vert, frag, width, height);
+        	mNativeContext = GL2JNILib.init(obj, tex_png, vert, frag, 480, 800);
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {

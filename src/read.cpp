@@ -11,6 +11,8 @@ using std::cin;
 namespace sanshichuan {
 
 
+// real use absFilename's (size + 1) into data buff.
+// NOTE, you should free data buff, after it become useless
 long readFileInStr(const char * absFilename, char ** data)
 {
     FILE * f = fopen(absFilename, "r");
@@ -26,7 +28,8 @@ long readFileInStr(const char * absFilename, char ** data)
     // cout << "size of file: " << size <<endl;
     fseek(f, 0l, SEEK_SET); // reset to head
 
-    char * buffer = (char *) malloc(sizeof(char) * size);
+    char * buffer = (char *) malloc(sizeof(char) * (size + 1));
+    memset(buffer, 0, sizeof(char) * (1 + size));
     long retval = fread(buffer, sizeof(char), size, f);
     if (retval != size) {
 	cout << "read fail ";

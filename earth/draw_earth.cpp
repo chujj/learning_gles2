@@ -17,11 +17,13 @@ int Init(UserData *userData)
     
     sanshichuan::readFileInStr(userData->vert_shader_file, &vert_shader_str);
     sanshichuan::readFileInStr(userData->frag_shader_file, &frag_shader_str);
-
+    
     GLuint programObject;
     
     // create the program object
     programObject = esLoadProgram(vert_shader_str, frag_shader_str);
+    free(vert_shader_str);
+    free(frag_shader_str);
 
     if (programObject == 0) {
 	return 0;

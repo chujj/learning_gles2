@@ -16,44 +16,51 @@ static void printGLString(const char *name, GLenum s) {
 }
 
 #include "esUtil.h"
-void ESUTIL_API esLogMessage ( const char *formatStr, ... ) 
+void ESUTIL_API esLogMessage ( const char *formatStr, ... )
 {
-LOGE("log printer, need to implement");
+    va_list params;
+    char buf[512];
+
+    va_start ( params, formatStr );
+    vsprintf ( buf, formatStr, params );
+    
+    LOGE("%s", buf);
+    va_end ( params );
 }
 
-UserData * kUserData;
-
-bool setupGraphics(JNIEnv * env, jstring obj_file, jstring tex_png_file, jstring vert, jstring frag,int w, int h) 
+void * setupGraphics(JNIEnv * env, jstring obj_file, jstring tex_png_file, jstring vert, jstring frag,int w, int h) 
 {
-    kUserData = (UserData *) malloc (sizeof(UserData));
-    memset(kUserData, 0, sizeof(UserData));
+    UserData* ud = (UserData *) malloc (sizeof(UserData));
+    memset(ud, 0, sizeof(UserData));
     jboolean copy = true;
     
-    kUserData->objfile= env->GetStringUTFChars(obj_file, &copy);
-    kUserData->texture_png_file= env->GetStringUTFChars(tex_png_file, &copy);
-    kUserData->vert_shader_file = env->GetStringUTFChars(vert, &copy);
-    kUserData->frag_shader_file= env->GetStringUTFChars(frag, &copy);
+    ud->objfile= env->GetStringUTFChars(obj_file, &copy);
+    ud->texture_png_file= env->GetStringUTFChars(tex_png_file, &copy);
+    ud->vert_shader_file = env->GetStringUTFChars(vert, &copy);
+    ud->frag_shader_file= env->GetStringUTFChars(frag, &copy);
 
-    Init(kUserData);
+    esLogMessage("vfile0: %s\n", ud->vert_shader_file);
     
+    Init(ud);
+
+    return (void*) ud;
 }
 
-void renderFrame() 
+void renderFrame(jint nativeContext) 
 {
-    if (kUserData) {
-	Draw(kUserData, 480, 800);
-    }
+
+    Draw((UserData*) nativeContext, 480, 800);
 }
 
 extern "C" {
-    JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,
+    JNIEXPORT int JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,
 							      jstring obj_file, jstring tex_png_file,
 							      jstring vert, jstring frag,
 								  jint width, jint height);
-    JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv * env, jobject obj);
+    JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv * env, jobject obj, jint nativeContext);
 };
 
-JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,
+JNIEXPORT int JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,
 							      jstring obj_file, jstring tex_png_file,
 							      jstring vert, jstring frag,
 							      jint width, jint height)
@@ -61,7 +68,7 @@ JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobj
     setupGraphics(env, obj_file, tex_png_file, vert, frag, width, height);
 }
 
-JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv * env, jobject obj)
+JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv * env, jobject obj, jint nativeContext)
 {
-    renderFrame();
+    renderFrame(nativeContext);
 }
