@@ -6,5 +6,8 @@ bin
 gen
 obj
 armeabi
+armeabi-v7a
+mips
+x86
 /android/res/
 

@@ -81,7 +81,7 @@ int Init(UserData *userData)
     int image_width, image_height;
     bool image_has_alpha;
     GLubyte *image_data;
-    char* image_filename = userData->texture_png_file;
+    const char* image_filename = userData->texture_png_file;
     if (sanshichuan::loadPngImage(image_filename, image_width, image_height, image_has_alpha, &image_data)) {
 	printf("load png %s success: w: %d, h: %d, alpha?: %d\n", image_filename, image_width, image_height, image_has_alpha);
     } else {
@@ -109,7 +109,7 @@ void Draw(ESContext *esContext)
 {
     UserData *userData = (UserData *)esContext->userData;
 #else
-void Draw(UserData *userData)
+    void Draw(UserData *userData, int vp_width, int vp_height)
 {
 #endif
     ESMatrix modelMatrix;
@@ -119,6 +119,8 @@ void Draw(UserData *userData)
 #ifndef SANSHICHUAN_ANDROID_BUILD
     // set the viewpoint
     glViewport(0,0, esContext->width, esContext->height);
+#else
+    glViewport(0,0, vp_width, vp_height);
 #endif
 
     // clear the color buffer

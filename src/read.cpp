@@ -11,7 +11,7 @@ using std::cin;
 namespace sanshichuan {
 
 
-long readFileInStr(char * absFilename, char ** data)
+long readFileInStr(const char * absFilename, char ** data)
 {
     FILE * f = fopen(absFilename, "r");
     if (f == NULL) {
@@ -78,7 +78,7 @@ void dumpShapes(std::vector<tinyobj::shape_t> &shapes)
 
 }
 
-bool loadPngImage(char *name, int &outWidth, int &outHeight, bool &outHasAlpha, GLubyte **outData) {
+bool loadPngImage(const char *name, int &outWidth, int &outHeight, bool &outHasAlpha, GLubyte **outData) {
     png_structp png_ptr;
     png_infop info_ptr;
     unsigned int sig_read = 0;

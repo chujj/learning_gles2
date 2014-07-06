@@ -27,6 +27,11 @@ bool setupGraphics(int w, int h)
 {
     kUserData = (UserData *) malloc (sizeof(UserData));
     memset(kUserData, 0, sizeof(UserData));
+    kUserData->vert_shader_file = "/sdcard/earth/vert.vert";
+    kUserData->frag_shader_file= "/sdcard/earth/frag.frag";
+    kUserData->texture_png_file= "/sdcard/earth/earth_universe.png";
+    kUserData->objfile= "/sdcard/earth/earth_universe.obj";
+    
     Init(kUserData);
     
 }
@@ -34,7 +39,7 @@ bool setupGraphics(int w, int h)
 void renderFrame() 
 {
     if (kUserData) {
-	Draw(kUserData);
+	Draw(kUserData, 400, 800);
     }
 }
 

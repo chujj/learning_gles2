@@ -36,10 +36,10 @@ private:
 typedef struct 
 {
     // paramaters from command line
-    char* vert_shader_file;
-    char* frag_shader_file;
-    char* objfile;
-    char* texture_png_file;
+    const char* vert_shader_file;
+    const char* frag_shader_file;
+    const char* objfile;
+    const char* texture_png_file;
 
     // gles related reference
     GLuint programObject;
@@ -60,7 +60,7 @@ void  Draw(ESContext *esContext);
 #else
 
 int  Init(UserData *userData);
-void  Draw(UserData *userData);
+void  Draw(UserData *userData, int vp_width, int vp_height);
 #endif /* SANSHICHUAN_ANDROID_BUILD */
 
 

@@ -7,8 +7,8 @@
 
 namespace sanshichuan {
 
-long readFileInStr(char * absFilename, char ** data);
-bool loadPngImage(char *name, int &outWidth, int &outHeight, bool &outHasAlpha, GLubyte **outData);
+long readFileInStr(const char * absFilename, char ** data);
+bool loadPngImage(const char *name, int &outWidth, int &outHeight, bool &outHasAlpha, GLubyte **outData);
 GLuint loadTexture(int width, int height, GLubyte *image_data);
 
 
