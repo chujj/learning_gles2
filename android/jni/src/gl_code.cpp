@@ -39,7 +39,7 @@ bool setupGraphics(int w, int h)
 void renderFrame() 
 {
     if (kUserData) {
-	Draw(kUserData, 400, 800);
+	Draw(kUserData, 480, 800);
     }
 }
 
