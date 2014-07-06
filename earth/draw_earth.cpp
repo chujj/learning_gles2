@@ -111,7 +111,14 @@ void Draw(ESContext *esContext)
 {
     UserData *userData = (UserData *)esContext->userData;
 #else
-    void Draw(UserData *userData, int vp_width, int vp_height)
+
+void onSizeChange(UserData *userData, int vp_width, int vp_height)
+{
+    glViewport(0, 0, vp_width, vp_height);
+}
+
+    
+    void Draw(UserData *userData)
 {
 #endif
     ESMatrix modelMatrix;
@@ -121,8 +128,6 @@ void Draw(ESContext *esContext)
 #ifndef SANSHICHUAN_ANDROID_BUILD
     // set the viewpoint
     glViewport(0,0, esContext->width, esContext->height);
-#else
-    glViewport(0,0, vp_width, vp_height);
 #endif
 
     // clear the color buffer

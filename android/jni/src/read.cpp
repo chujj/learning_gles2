@@ -11,7 +11,8 @@ using std::cin;
 namespace sanshichuan {
 
 
-// real use absFilename's (size + 1) into data buff
+// real use absFilename's (size + 1) into data buff.
+// NOTE, you should free data buff, after it become useless
 long readFileInStr(const char * absFilename, char ** data)
 {
     FILE * f = fopen(absFilename, "r");

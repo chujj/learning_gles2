@@ -28,7 +28,7 @@ void ESUTIL_API esLogMessage ( const char *formatStr, ... )
     va_end ( params );
 }
 
-void * setupGraphics(JNIEnv * env, jstring obj_file, jstring tex_png_file, jstring vert, jstring frag,int w, int h) 
+void * setupGraphics(JNIEnv * env, jstring obj_file, jstring tex_png_file, jstring vert, jstring frag) 
 {
     UserData* ud = (UserData *) malloc (sizeof(UserData));
     memset(ud, 0, sizeof(UserData));
@@ -48,25 +48,31 @@ void * setupGraphics(JNIEnv * env, jstring obj_file, jstring tex_png_file, jstri
 
 void renderFrame(jint nativeContext) 
 {
-
-    Draw((UserData*) nativeContext, 480, 800);
+    Draw((UserData*) nativeContext);
 }
 
 extern "C" {
     JNIEXPORT int JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,
 							      jstring obj_file, jstring tex_png_file,
-							      jstring vert, jstring frag,
-								  jint width, jint height);
+								 jstring vert, jstring frag);
+
+    JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_eglChange(JNIEnv *env, jobject obj, jint nativeContext, jint width, jint height);
+    
     JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv * env, jobject obj, jint nativeContext);
 };
 
 JNIEXPORT int JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,
 							      jstring obj_file, jstring tex_png_file,
-							      jstring vert, jstring frag,
-							      jint width, jint height)
+							     jstring vert, jstring frag)
 {
-    setupGraphics(env, obj_file, tex_png_file, vert, frag, width, height);
+    setupGraphics(env, obj_file, tex_png_file, vert, frag);
 }
+
+JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_eglChange(JNIEnv *env, jobject obj, jint nativeContext, jint width, jint height)
+{
+    onSizeChange((UserData*)nativeContext, width, height);
+}
+
 
 JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv * env, jobject obj, jint nativeContext)
 {

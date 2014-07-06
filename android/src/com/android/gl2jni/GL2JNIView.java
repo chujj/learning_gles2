@@ -333,17 +333,19 @@ class GL2JNIView extends GLSurfaceView {
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
+        	if (mNativeContext != 0) {
+        		GL2JNILib.eglChange(width, height);
+        	}
+        }
+
+        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         	AssetManager am = GL2JNIView.this.getContext().getAssets();
         	Context ctx = GL2JNIView.this.getContext();
         	String obj = AssetHelper.copyAssetToSDRAM(ctx , am, "earth_universe.obj");
         	String tex_png = AssetHelper.copyAssetToSDRAM(ctx , am, "earth_universe.png");
         	String vert = AssetHelper.copyAssetToSDRAM(ctx , am, "vert.vert");
         	String frag = AssetHelper.copyAssetToSDRAM(ctx , am, "frag.frag");
-        	mNativeContext = GL2JNILib.init(obj, tex_png, vert, frag, 480, 800);
-        }
-
-        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            // Do nothing.
+        	mNativeContext = GL2JNILib.init(obj, tex_png, vert, frag);
         }
     }
 }

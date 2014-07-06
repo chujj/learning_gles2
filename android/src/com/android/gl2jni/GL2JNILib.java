@@ -24,10 +24,8 @@ public class GL2JNILib {
          System.loadLibrary("gl2jni");
      }
 
-    /**
-     * @param width the current view width
-     * @param height the current view height
-     */
-     public static native int init(String obj, String tex, String vert, String frag, int width, int height);
+     public static native int init(String obj, String tex, String vert, String frag);
      public static native void step(int nativeContext);
+     public static native void eglChange(int width, int height) ;
+
 }

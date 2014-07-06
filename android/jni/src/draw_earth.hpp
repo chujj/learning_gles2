@@ -60,7 +60,8 @@ void  Draw(ESContext *esContext);
 #else
 
 int  Init(UserData *userData);
-void  Draw(UserData *userData, int vp_width, int vp_height);
+void  Draw(UserData *userData);
+void onSizeChange(UserData *userData, int vp_width, int vp_height);
 #endif /* SANSHICHUAN_ANDROID_BUILD */
 
 
