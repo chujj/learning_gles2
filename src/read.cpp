@@ -43,15 +43,16 @@ long readFileInStr(const char * absFilename, char ** data)
 }
 
 
-void dumpMatrix(ESMatrix & matrix) 
+void printMatrix(ESMatrix & matrix) 
 {
-    for (int i = 0; i < 4; ++i) {
-	for (int j = 0; j < 4; ++j) {
-	    printf("%f ", matrix.m[j][i]);
-	}
-	printf("\n");
-    }
-    printf("\n");
+    printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+
+    printf("%3f, %3f, %3f, %3f\n", matrix.m[0][0], matrix.m[0][1], matrix.m[0][2], matrix.m[0][3]);
+    printf("%3f, %3f, %3f, %3f\n", matrix.m[1][0], matrix.m[1][1], matrix.m[1][2], matrix.m[1][3]);    
+    printf("%3f, %3f, %3f, %3f\n", matrix.m[2][0], matrix.m[2][1], matrix.m[2][2], matrix.m[2][3]);
+    printf("%3f, %3f, %3f, %3f\n", matrix.m[3][0], matrix.m[3][1], matrix.m[3][2], matrix.m[3][3]);
+
+    printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 }
 
 void dumpShapes(std::vector<tinyobj::shape_t> &shapes)

@@ -10,7 +10,7 @@ namespace sanshichuan {
 long readFileInStr(const char * absFilename, char ** data);
 bool loadPngImage(const char *name, int &outWidth, int &outHeight, bool &outHasAlpha, GLubyte **outData);
 GLuint loadTexture(int width, int height, GLubyte *image_data);
-
+void printMatrix(ESMatrix & matrix);
 
 }
 
