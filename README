@@ -1,3 +1,15 @@
-1. tiny_obj_reader.h from github
-2. gles2
-3. libpng 1.2.49-1
+learn the opengles20 according *OpenGL ES 2.0 Programming Guide*
+
+* gles2
+** DONE vertics
+** mvp
+** shader language
+*** built in
+*** limits
+** light
+** DONE depth test
+** blender
+* resource
+- tiny_obj_reader: https://github.com/syoyo/tinyobjloader
+- libpng 1.2.49-1: 'apt-get source' under debian wheezy 7.0
+- blender 2.63
