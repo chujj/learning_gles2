@@ -8,8 +8,7 @@ using std::endl;
 int main(int argc, char *argv[])
 {
 
-    ESMatrix testM, fru, mvp;
-
+    ESMatrix testM, testM2;
     
     esMatrixLoadIdentity(&testM);
     cout << "identity" << endl;
@@ -25,6 +24,18 @@ int main(int argc, char *argv[])
     cout << "rotate z 90" << endl;
     sanshichuan::printMatrix(testM);
 
+    esMatrixLoadIdentity(&testM);
+    esScale(&testM, 2, 3, 4);
+    cout << "scale x-2 y-3 z-4" << endl;
+    sanshichuan::printMatrix(testM);
+
+    esMatrixLoadIdentity(&testM);
+    esScale(&testM, 0, 0, -5);
+    esTranslate(&testM, 0, 0, -5);
+    cout << "I want scale z-5, than translate z-5" <<endl;
+    sanshichuan::printMatrix(testM);
+
+    
     // esMatrixLoadIdentity(&fru);
     // esFrustum(&fru, -1, 1, -1, 1, 3, 30);
     // sanshichuan::printMatrix(fru);
