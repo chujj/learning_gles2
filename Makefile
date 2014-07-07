@@ -36,6 +36,9 @@ earth.android.clean:
 earth: earth.bin
 	./earth.bin earth/earth_universe.obj earth/earth_universe.png earth/vert.vert earth/frag.frag
 
+dump_matrix.bin: src/dump_matrix.cpp libcommon.a ${SRC}
+	g++ -g -fpermissive ${INCDIR} ${LIBS} ${SRC} src/dump_matrix.cpp libcommon.a -o dump_matrix.bin &&  ./dump_matrix.bin
+
 
 libcommon.a: ${COMMONSRC} ${COMMONHRD}
 	make -C src/Common
