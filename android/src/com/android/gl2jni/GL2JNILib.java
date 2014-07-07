@@ -26,6 +26,6 @@ public class GL2JNILib {
 
      public static native int init(String obj, String tex, String vert, String frag);
      public static native void step(int nativeContext);
-     public static native void eglChange(int width, int height) ;
+     public static native void eglChange(int nativeContext, int width, int height) ;
 
 }

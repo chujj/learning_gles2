@@ -46,6 +46,7 @@ typedef struct
     std::vector<tinyobj::shape_t> * shapes;
     std::vector<Earth_Universe_Rotate_Loc_Speed *> * speeds;
     ESMatrix mMVPMatrix;
+    GLfloat frustumX;
     GLuint texure;
     GLuint positionLoc, texCoordLoc, textUniformLoc;
 } UserData;

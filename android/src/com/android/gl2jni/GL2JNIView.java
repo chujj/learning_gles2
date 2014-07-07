@@ -334,7 +334,7 @@ class GL2JNIView extends GLSurfaceView {
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
         	if (mNativeContext != 0) {
-        		GL2JNILib.eglChange(width, height);
+        		GL2JNILib.eglChange(mNativeContext, width, height);
         	}
         }
 

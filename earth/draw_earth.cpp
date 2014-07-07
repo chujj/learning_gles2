@@ -115,6 +115,7 @@ void Draw(ESContext *esContext)
 void onSizeChange(UserData *userData, int vp_width, int vp_height)
 {
     glViewport(0, 0, vp_width, vp_height);
+    userData->frustumX = 1.0f * vp_width / vp_height;
 }
 
     
@@ -135,6 +136,11 @@ void onSizeChange(UserData *userData, int vp_width, int vp_height)
 
     // USe the program object
     glUseProgram(userData->programObject);
+
+    // project matirx
+    esMatrixLoadIdentity(&perspectMatrix);
+    esFrustum(&perspectMatrix, -userData->frustumX, userData->frustumX, -1, 1, 3, 30);
+
     
     for (int i = 0; i < ((userData->shapes->size())); ++i) {
 	// model matrix
@@ -143,12 +149,6 @@ void onSizeChange(UserData *userData, int vp_width, int vp_height)
 	esTranslate(&modelMatrix, 0, 0, userData->speeds->at(i)->translate_z);
 	esRotate(&modelMatrix, userData->speeds->at(i)->angle, userData->speeds->at(i)->dx, userData->speeds->at(i)->dy, userData->speeds->at(i)->dz);
 	userData->speeds->at(i)->nextframe();
-	
-	// project matirx
-	esMatrixLoadIdentity(&perspectMatrix);
-	esFrustum(&perspectMatrix, -1, 1, -1, 1, 3, 30);
-//    float aspect = (GLfloat) esContext->width / (GLfloat) esContext->height;
-//    esPerspective(&perspectMatrix, 60.0f, aspect, -0, -0.3);
 
 	esMatrixLoadIdentity(&userData->mMVPMatrix);
 	esMatrixMultiply(&userData->mMVPMatrix, &modelMatrix, &perspectMatrix);
@@ -196,7 +196,8 @@ int main(int argc, char *argv[])
 {
     ESContext esContext;
     UserData userData;
-
+    userData.frustumX = 1;
+    
     if (argc != (4 + 1)) {
 	printf("usage: ./draw_png_test objfile textpngfile vert_sharder_file frag_sharder_file\n");
 	return 0;
