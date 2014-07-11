@@ -27,7 +27,7 @@ const material_properties material = material_properties(
      0.0);
 
 const directional_light light = directional_light(
-     vec3(-7, 7, 0),
+     vec3(-1, -0, 0.5),
      vec3(0, 0, 0),
      vec4(0, 0, 0, 0),
      vec4(1, 1, 1, 0),
