@@ -48,7 +48,7 @@ typedef struct
     ESMatrix mMVPMatrix;
     GLfloat frustumX;
     GLuint texure;
-    GLuint positionLoc, texCoordLoc, textUniformLoc;
+    GLuint positionLoc, normalLoc, texCoordLoc, textUniformLoc;
 } UserData;
 
 

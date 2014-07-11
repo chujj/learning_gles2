@@ -41,6 +41,7 @@ int Init(UserData *userData)
     // Get the attribute locations
     userData->positionLoc = glGetAttribLocation ( userData->programObject, "vPosition" );
     userData->texCoordLoc = glGetAttribLocation ( userData->programObject, "a_texCoord" );
+    userData->normalLoc =   glGetAttribLocation(  userData->programObject, "a_normal" );
     
     // Get the sampler location
     userData->textUniformLoc = glGetUniformLocation ( userData->programObject, "s_texture" );
@@ -160,13 +161,20 @@ void onSizeChange(UserData *userData, int vp_width, int vp_height)
 	glVertexAttribPointer(userData->positionLoc, 3, GL_FLOAT, GL_FALSE, 0,  &pos.front());
 	glEnableVertexAttribArray(userData->positionLoc);
 
+	// load the normal data
+	std::vector<float> normals= mesh.normals;
+	glVertexAttribPointer(userData->normalLoc, 3, GL_FLOAT,   GL_FALSE, 0,  &normals.front());
+	glEnableVertexAttribArray(userData->normalLoc);
+	
 	// load texCoord data
 	glVertexAttribPointer(userData->texCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, & mesh.texcoords.front());
 	glEnableVertexAttribArray(userData->texCoordLoc);
 
 	// load the MVP matrix
 	glUniformMatrix4fv(
-	    glGetUniformLocation(userData->programObject, "uModelMatrix"), 1, false, (GLfloat*)&userData->mMVPMatrix);
+	    glGetUniformLocation(userData->programObject, "uModelMatrix"), 1, false, (GLfloat*)&modelMatrix);
+	glUniformMatrix4fv(
+	    glGetUniformLocation(userData->programObject, "uProjectionMatrix"), 1, false, (GLfloat*)&perspectMatrix);
 
 	/// load the texture
 	// Bind the texture

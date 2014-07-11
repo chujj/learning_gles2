@@ -57,7 +57,6 @@ vec4 calc_directional_light(vec3 normal)
 
 
 uniform mat4 uModelMatrix;
-uniform mat4 uProjectionMatrix;
 attribute vec4 vPosition;
 attribute vec2 a_texCoord;
 attribute vec3 a_normal;
@@ -67,7 +66,7 @@ varying vec4 v_light_color;
 
 void main()
 {
-     gl_Position = uProjectionMatrix * uModelMatrix * vPosition;
+     gl_Position = uModelMatrix * vPosition;
      v_texCoord = a_texCoord;
      v_light_color = calc_directional_light (
 	  normalize(
