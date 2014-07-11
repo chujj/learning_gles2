@@ -1,0 +1,1 @@
+./draw_png_test  ~/sphere.obj ~/funny_head.png light.vert light.frag

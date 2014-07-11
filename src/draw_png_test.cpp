@@ -29,7 +29,7 @@ typedef struct
 //    tinyobj::shape_t * shape;
     ESMatrix mMVPMatrix;
     GLuint texure;
-    GLuint positionLoc, texCoordLoc, textUniformLoc;
+    GLuint positionLoc, normalLoc, texCoordLoc, textUniformLoc;
 } UserData;
 
 
@@ -64,11 +64,11 @@ int Init(ESContext *esContext)
     // Get the attribute locations
     userData->positionLoc = glGetAttribLocation ( userData->programObject, "vPosition" );
     userData->texCoordLoc = glGetAttribLocation ( userData->programObject, "a_texCoord" );
-    
+    userData->normalLoc = glGetAttribLocation( userData->programObject,    "a_normal");
     // Get the sampler location
     userData->textUniformLoc = glGetUniformLocation ( userData->programObject, "s_texture" );
 
-    printf("posLoc: %d ; texCoorLoc: %d; text: %d\n", userData->positionLoc, userData->texCoordLoc, userData->textUniformLoc);
+    printf("posLoc: %d ; texCoorLoc: %d; text: %d; normal: %d\n", userData->positionLoc, userData->texCoordLoc, userData->textUniformLoc, userData->normalLoc);
 
     // load images
     int image_width, image_height;
@@ -139,10 +139,16 @@ void Draw(ESContext *esContext)
 //    for (int i = ((userData->shapes->size()) - 1); i >=0; --i) {
     for (int i = 0; i < ((userData->shapes->size())); ++i) {
 	tinyobj::mesh_t mesh = (userData->shapes->at(i)).mesh;
-	
+
+	// verties
 	std::vector<float> pos = mesh.positions;
 	glVertexAttribPointer(userData->positionLoc, 3, GL_FLOAT, GL_FALSE, 0, pos.data());
 	glEnableVertexAttribArray(userData->positionLoc);
+
+	// normal
+//	std::vect
+	glVertexAttribPointer(userData->normalLoc,   3, GL_FLOAT, GL_FALSE, 0, mesh.normals.data());
+	glEnableVertexAttribArray(userData->normalLoc);
 
 	// load texCoord data
 	glVertexAttribPointer(userData->texCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, mesh.texcoords.data());
