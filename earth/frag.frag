@@ -29,7 +29,7 @@ const material_properties material = material_properties(
      0.0);
 
 const directional_light light = directional_light(
-     vec3(-1, -0, 0.5),
+     vec3(-1, 0.5, 0.5),
      vec3(0, 0, 0),
      vec4(0, 0, 0, 0),
      vec4(1, 1, 1, 0),
@@ -39,12 +39,12 @@ float v_diffuse_factor;
 
 // normal has been transformal into eye space and is a normalized
 // value returns the computed color
-vec4 calc_directional_light(vec3 normal) 
+vec4 calc_directional_light(vec3 normal, vec3 position) 
 {
      vec4 computed_color = vec4(c_zero, c_zero, c_zero, c_zero);
      float ndotl; // dot product of normal & light direction
      float ndoth; // dot product of normal & half-plane vector
-     ndotl = max(c_zero, dot(normal, normalize( light.direction)));
+     ndotl = max(c_zero, dot(normalize(position - vec3(0, 0, -9)), normalize( light.direction)));
      v_diffuse_factor = ndotl;
      /* ndoth = max(c_zero, dot(normal, light.halfplane)); */
 
@@ -66,7 +66,7 @@ varying vec3 v_normal;
 void main()
 {
      vec4 v_light_color = calc_directional_light (
-	  normalize(v_normal)
+	  normalize(v_normal), vec3(v_position)
 	  );
 
      gl_FragColor= (texture2D( s_texture, v_texCoord ) + v_light_color) * v_diffuse_factor;
