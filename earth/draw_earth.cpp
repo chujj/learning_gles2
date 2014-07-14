@@ -71,6 +71,7 @@ int Init(UserData *userData)
     for (int i = 0; i < shapes.size(); ++i) {
     	if (shapes[i].name.find("earth") == 0) {
 	    speed[i] = new Earth_Universe_Rotate_Loc_Speed(0.3, -9, 0, 1, 0);
+	    speed[i]->use_light = 1.0;
     	} else if (shapes[i].name.find("universe") == 0) {
 	    speed[i] = new Earth_Universe_Rotate_Loc_Speed (0.001, -19, 1, 1, 1);
     	} else {
@@ -175,7 +176,10 @@ void onSizeChange(UserData *userData, int vp_width, int vp_height)
 	    glGetUniformLocation(userData->programObject, "uModelMatrix"), 1, false, (GLfloat*)&modelMatrix);
 	glUniformMatrix4fv(
 	    glGetUniformLocation(userData->programObject, "uProjectionMatrix"), 1, false, (GLfloat*)&perspectMatrix);
-
+	glUniform1f(
+	    glGetUniformLocation(userData->programObject, "u_useLight"),
+	    userData->speeds->at(i)->use_light);
+	
 	/// load the texture
 	// Bind the texture
 	glActiveTexture ( GL_TEXTURE0 );

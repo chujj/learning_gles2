@@ -29,7 +29,7 @@ const material_properties material = material_properties(
      0.0);
 
 const directional_light light = directional_light(
-     vec3(-1, 0.5, 0.5),
+     vec3(-1, 0.75, 0.25),
      vec3(0, 0, 0),
      vec4(0, 0, 0, 0),
      vec4(1, 1, 1, 0),
@@ -58,6 +58,7 @@ vec4 calc_directional_light(vec3 normal, vec3 position)
 }
 
 uniform sampler2D s_texture;
+uniform float u_useLight;
 varying vec2 v_texCoord;
 varying vec4 v_position;
 varying vec3 v_normal;
@@ -65,11 +66,15 @@ varying vec3 v_normal;
 
 void main()
 {
-     vec4 v_light_color = calc_directional_light (
-	  normalize(v_normal), vec3(v_position)
-	  );
+     if (u_useLight > 0.0) {
+	  vec4 v_light_color = calc_directional_light (
+	       normalize(v_normal), vec3(v_position)
+	       );
 
-     gl_FragColor= (texture2D( s_texture, v_texCoord ) + v_light_color) * v_diffuse_factor;
+	  gl_FragColor= (texture2D( s_texture, v_texCoord ) + v_light_color) * v_diffuse_factor;
+     } else {
+	  gl_FragColor= texture2D( s_texture, v_texCoord );
+     }
 }
 
 
