@@ -1,11 +1,9 @@
 #include "draw_earth.hpp"
 
-
+const static float kFrustumNormal = 500;
 
 #ifndef SANSHICHUAN_ANDROID_BUILD
 namespace {
-
-const static float kFrustumNormal = 500;
 
 int Init(ESContext *esContext)
 {
