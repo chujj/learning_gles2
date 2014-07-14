@@ -1,9 +1,10 @@
 #include "draw_earth.hpp"
 
-
+const static float kFrustumNormal = 500;
 
 #ifndef SANSHICHUAN_ANDROID_BUILD
 namespace {
+
 int Init(ESContext *esContext)
 {
     UserData *userData = (UserData *)esContext->userData;
@@ -71,6 +72,7 @@ int Init(UserData *userData)
     for (int i = 0; i < shapes.size(); ++i) {
     	if (shapes[i].name.find("earth") == 0) {
 	    speed[i] = new Earth_Universe_Rotate_Loc_Speed(0.3, -9, 0, 1, 0);
+	    speed[i]->use_light = 1.0;
     	} else if (shapes[i].name.find("universe") == 0) {
 	    speed[i] = new Earth_Universe_Rotate_Loc_Speed (0.001, -19, 1, 1, 1);
     	} else {
@@ -108,6 +110,13 @@ int Init(UserData *userData)
 }
 
 #ifndef SANSHICHUAN_ANDROID_BUILD
+void onSizeChange(ESContext *esContext)
+{
+    ((UserData*) esContext->userData)->frustumX = 1.0f * esContext->width / kFrustumNormal;
+    ((UserData*) esContext->userData)->frustumY = 1.0f * esContext->height / kFrustumNormal;
+    glViewport(0, 0, esContext->width, esContext->height);
+}
+
 void Draw(ESContext *esContext)
 {
     UserData *userData = (UserData *)esContext->userData;
@@ -116,7 +125,8 @@ void Draw(ESContext *esContext)
 void onSizeChange(UserData *userData, int vp_width, int vp_height)
 {
     glViewport(0, 0, vp_width, vp_height);
-    userData->frustumX = 1.0f * vp_width / vp_height;
+    userData->frustumX = 1.0f * vp_width / kFrustumNormal;
+    userData->frustumY = 1.0f * vp_height / kFrustumNormal;
 }
 
     
@@ -126,12 +136,6 @@ void onSizeChange(UserData *userData, int vp_width, int vp_height)
     ESMatrix modelMatrix;
     ESMatrix perspectMatrix;
 
-
-#ifndef SANSHICHUAN_ANDROID_BUILD
-    // set the viewpoint
-    glViewport(0,0, esContext->width, esContext->height);
-#endif
-
     // clear the color buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -140,7 +144,9 @@ void onSizeChange(UserData *userData, int vp_width, int vp_height)
 
     // project matirx
     esMatrixLoadIdentity(&perspectMatrix);
-    esFrustum(&perspectMatrix, -userData->frustumX, userData->frustumX, -1, 1, 3, 30);
+//    printf("%f, %f \n", -userData->frustumX, userData->frustumX);
+    
+    esFrustum(&perspectMatrix, -userData->frustumX, userData->frustumX, -userData->frustumY, userData->frustumY, 6, 30);
 
     
     for (int i = 0; i < ((userData->shapes->size())); ++i) {
@@ -175,7 +181,10 @@ void onSizeChange(UserData *userData, int vp_width, int vp_height)
 	    glGetUniformLocation(userData->programObject, "uModelMatrix"), 1, false, (GLfloat*)&modelMatrix);
 	glUniformMatrix4fv(
 	    glGetUniformLocation(userData->programObject, "uProjectionMatrix"), 1, false, (GLfloat*)&perspectMatrix);
-
+	glUniform1f(
+	    glGetUniformLocation(userData->programObject, "u_useLight"),
+	    userData->speeds->at(i)->use_light);
+	
 	/// load the texture
 	// Bind the texture
 	glActiveTexture ( GL_TEXTURE0 );
@@ -204,7 +213,6 @@ int main(int argc, char *argv[])
 {
     ESContext esContext;
     UserData userData;
-    userData.frustumX = 1;
     
     if (argc != (4 + 1)) {
 	printf("usage: ./draw_png_test objfile textpngfile vert_sharder_file frag_sharder_file\n");
@@ -218,14 +226,22 @@ int main(int argc, char *argv[])
 
     esInitContext(&esContext);
     esContext.userData = &userData;
-     
-    esCreateWindow(&esContext, "Earth_Universe", 400, 400, ES_WINDOW_RGB | ES_WINDOW_DEPTH);
+
+    int width = 400;
+    int height = 400;
+    // int width = 1184;
+    // int height = 768;
+
+    esCreateWindow(&esContext, "Earth_Universe", width, height, ES_WINDOW_RGB | ES_WINDOW_DEPTH);
+    userData.frustumX = 1.0 * width / kFrustumNormal;
+    userData.frustumY = 1.0 * height / kFrustumNormal;
 
     if (!Init(&esContext)) {
 	return 0;
     }
     esRegisterDrawFunc(&esContext, Draw);
-
+    esRegisterResizeFunc(&esContext, onSizeChange);
+    
     esMainLoop(&esContext);
     
     return 0;

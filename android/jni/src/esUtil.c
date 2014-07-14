@@ -135,7 +135,7 @@ EGLBoolean WinCreate(ESContext *esContext, const char *title)
 
     root = DefaultRootWindow(x_display);
 
-    swa.event_mask  =  ExposureMask | PointerMotionMask | KeyPressMask;
+    swa.event_mask  =  ExposureMask | PointerMotionMask | KeyPressMask | ResizeRedirectMask;
     win = XCreateWindow(
                x_display, root,
                0, 0, esContext->width, esContext->height, 0,
@@ -200,7 +200,14 @@ GLboolean userInterrupt(ESContext *esContext)
                 if (esContext->keyFunc != NULL)
                     esContext->keyFunc(esContext, text, 0, 0);
             }
-        }
+        } else if (xev.type == ResizeRequest) {
+	     esContext->width =  xev.xresizerequest.width;
+	     esContext->height = xev.xresizerequest.height;
+	     printf("resizeREquest width:%d height:%d\n", esContext->width, esContext->height);
+	     if (esContext->resizeFunc)
+		  esContext->resizeFunc(esContext);
+	}
+	
         if ( xev.type == DestroyNotify )
             userinterrupt = GL_TRUE;
     }
@@ -332,6 +339,10 @@ void ESUTIL_API esRegisterDrawFunc ( ESContext *esContext, void (ESCALLBACK *dra
    esContext->drawFunc = drawFunc;
 }
 
+void ESUTIL_API esRegisterResizeFunc ( ESContext *esContext, void (ESCALLBACK *resizeFunc) (ESContext* ) )
+{
+   esContext->resizeFunc = resizeFunc;
+}
 
 ///
 //  esRegisterUpdateFunc()
