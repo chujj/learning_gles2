@@ -5,7 +5,7 @@
 #ifndef SANSHICHUAN_ANDROID_BUILD
 namespace {
 
-const static float kFrustumNormal = 1024;
+const static float kFrustumNormal = 500;
 
 int Init(ESContext *esContext)
 {
@@ -148,7 +148,7 @@ void onSizeChange(UserData *userData, int vp_width, int vp_height)
     esMatrixLoadIdentity(&perspectMatrix);
 //    printf("%f, %f \n", -userData->frustumX, userData->frustumX);
     
-    esFrustum(&perspectMatrix, -userData->frustumX, userData->frustumX, -userData->frustumY, userData->frustumY, 3, 30);
+    esFrustum(&perspectMatrix, -userData->frustumX, userData->frustumX, -userData->frustumY, userData->frustumY, 6, 30);
 
     
     for (int i = 0; i < ((userData->shapes->size())); ++i) {
@@ -229,10 +229,10 @@ int main(int argc, char *argv[])
     esInitContext(&esContext);
     esContext.userData = &userData;
 
-    // int width = 768;
-    // int height = 1184;
-    int width = 1184;
-    int height = 768;
+    int width = 768;
+    int height = 1184;
+    // int width = 1184;
+    // int height = 768;
 
     esCreateWindow(&esContext, "Earth_Universe", width, height, ES_WINDOW_RGB | ES_WINDOW_DEPTH);
     userData.frustumX = 1.0 * width / kFrustumNormal;
