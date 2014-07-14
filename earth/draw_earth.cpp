@@ -227,8 +227,8 @@ int main(int argc, char *argv[])
     esInitContext(&esContext);
     esContext.userData = &userData;
 
-    int width = 768;
-    int height = 1184;
+    int width = 400;
+    int height = 400;
     // int width = 1184;
     // int height = 768;
 
