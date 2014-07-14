@@ -109,6 +109,12 @@ int Init(UserData *userData)
 }
 
 #ifndef SANSHICHUAN_ANDROID_BUILD
+void onSizeChange(ESContext *esContext)
+{
+    ((UserData*) esContext->userData)->frustumX = 1.0f * esContext->width / esContext->height;
+    glViewport(0, 0, esContext->width, esContext->height);
+}
+
 void Draw(ESContext *esContext)
 {
     UserData *userData = (UserData *)esContext->userData;
@@ -126,12 +132,6 @@ void onSizeChange(UserData *userData, int vp_width, int vp_height)
 #endif
     ESMatrix modelMatrix;
     ESMatrix perspectMatrix;
-
-
-#ifndef SANSHICHUAN_ANDROID_BUILD
-    // set the viewpoint
-    glViewport(0,0, esContext->width, esContext->height);
-#endif
 
     // clear the color buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -208,7 +208,6 @@ int main(int argc, char *argv[])
 {
     ESContext esContext;
     UserData userData;
-    userData.frustumX = 1;
     
     if (argc != (4 + 1)) {
 	printf("usage: ./draw_png_test objfile textpngfile vert_sharder_file frag_sharder_file\n");
@@ -222,14 +221,21 @@ int main(int argc, char *argv[])
 
     esInitContext(&esContext);
     esContext.userData = &userData;
-     
-    esCreateWindow(&esContext, "Earth_Universe", 400, 400, ES_WINDOW_RGB | ES_WINDOW_DEPTH);
+
+    // int width = 768;
+    // int height = 1184;
+    int width = 1184;
+    int height = 768;
+
+    esCreateWindow(&esContext, "Earth_Universe", width, height, ES_WINDOW_RGB | ES_WINDOW_DEPTH);
+    userData.frustumX = 1.0 * width / height;
 
     if (!Init(&esContext)) {
 	return 0;
     }
     esRegisterDrawFunc(&esContext, Draw);
-
+    esRegisterResizeFunc(&esContext, onSizeChange);
+    
     esMainLoop(&esContext);
     
     return 0;
