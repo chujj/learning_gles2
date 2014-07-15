@@ -39,6 +39,13 @@ earth: earth.bin
 dump_matrix.bin: src/dump_matrix.cpp libcommon.a ${SRC}
 	g++ -g -fpermissive ${INCDIR} ${LIBS} ${SRC} src/dump_matrix.cpp libcommon.a -o dump_matrix.bin &&  ./dump_matrix.bin
 
+particle.bin: libcommon.a ${TINY_OBJ_LOADER_SRC} ${SRC} ./particle/particle.cpp
+	g++ -g -fpermissive ${INCDIR} ${LIBS}  ${TINY_OBJ_LOADER_SRC} ${SRC} ./particle/particle.cpp libcommon.a -o particle.bin
+
+particle: particle.bin
+	./particle.bin
+
+
 
 libcommon.a: ${COMMONSRC} ${COMMONHRD}
 	make -C src/Common
