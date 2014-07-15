@@ -34,7 +34,7 @@ private:
     GLfloat delta_max;
 };
 
-typedef struct 
+typedef struct _UserData
 {
     // paramaters from command line
     const char* vert_shader_file;
@@ -50,6 +50,9 @@ typedef struct
     GLfloat frustumX, frustumY;
     GLuint texure;
     GLuint positionLoc, normalLoc, texCoordLoc, textUniformLoc;
+    int earth_idx, universe_idx;
+    void (*drawearth)(_UserData* userdata, int idx, const ESMatrix * perspectMatrix);
+    void (*drawuniverse)(_UserData* userdata, int idx, const ESMatrix * perspectMatrix);
 } UserData;
 
 
