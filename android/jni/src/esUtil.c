@@ -135,7 +135,7 @@ EGLBoolean WinCreate(ESContext *esContext, const char *title)
 
     root = DefaultRootWindow(x_display);
 
-    swa.event_mask  =  ExposureMask | PointerMotionMask | KeyPressMask | ResizeRedirectMask;
+    swa.event_mask  =  ExposureMask | PointerMotionMask | KeyPressMask | StructureNotifyMask; // | ResizeRedirectMask;
     win = XCreateWindow(
                x_display, root,
                0, 0, esContext->width, esContext->height, 0,
@@ -201,12 +201,15 @@ GLboolean userInterrupt(ESContext *esContext)
                     esContext->keyFunc(esContext, text, 0, 0);
             }
         } else if (xev.type == ResizeRequest) {
-	     esContext->width =  xev.xresizerequest.width;
-	     esContext->height = xev.xresizerequest.height;
-	     printf("resizeREquest width:%d height:%d\n", esContext->width, esContext->height);
+//	     printf("resizeREquest width\n");
+	} else if (xev.type == ConfigureNotify) {
+//	     printf("configure change, width %d\n", 	     xev.xconfigure.width);
+	     esContext->width =  xev.xconfigure.width;
+	     esContext->height = xev.xconfigure.height;
 	     if (esContext->resizeFunc)
 		  esContext->resizeFunc(esContext);
 	}
+	
 	
         if ( xev.type == DestroyNotify )
             userinterrupt = GL_TRUE;

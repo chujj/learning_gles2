@@ -4,11 +4,16 @@ const static float kFrustumNormal = 500;
 
 #ifndef SANSHICHUAN_ANDROID_BUILD
 namespace {
+void drawearth(UserData* userData, int earth_idx, const ESMatrix * perspectMatrix) ;
+void drawuniverse(UserData* userData, int universe_idx, const ESMatrix * perspectMatrix);
 
 int Init(ESContext *esContext)
 {
     UserData *userData = (UserData *)esContext->userData;
 #else
+void drawearth(UserData* userData, int earth_idx, const ESMatrix * perspectMatrix) ;
+void drawuniverse(UserData* userData, int universe_idx, const ESMatrix * perspectMatrix);
+
 int Init(UserData *userData)
 {
 #endif
@@ -35,6 +40,8 @@ int Init(UserData *userData)
     glDepthFunc(GL_LEQUAL);
     glClearDepthf(1.0f);
     
+    userData->drawearth = drawearth;
+    userData->drawuniverse = drawuniverse;
     
     // STORE the program object
     userData->programObject = programObject;
@@ -73,8 +80,10 @@ int Init(UserData *userData)
     	if (shapes[i].name.find("earth") == 0) {
 	    speed[i] = new Earth_Universe_Rotate_Loc_Speed(0.3, -9, 0, 1, 0);
 	    speed[i]->use_light = 1.0;
+	    userData->earth_idx = i;
     	} else if (shapes[i].name.find("universe") == 0) {
-	    speed[i] = new Earth_Universe_Rotate_Loc_Speed (0.001, -19, 1, 1, 1);
+	    speed[i] = new Earth_Universe_Rotate_Loc_Speed (0.001, -9, 1, 1, 1);
+	    userData->universe_idx = i;
     	} else {
     	    printf ("name not support %s\n", shapes[i].name.c_str());
     	    exit(255);
@@ -108,6 +117,110 @@ int Init(UserData *userData)
 
     return TRUE;
 }
+
+
+void drawearth(UserData* userData, int earth_idx, const ESMatrix * perspectMatrix) 
+{
+    ESMatrix modelMatrix;
+    
+    // model matrix
+    esMatrixLoadIdentity(&modelMatrix);
+
+    esTranslate(&modelMatrix, 0, 0, userData->speeds->at(earth_idx)->translate_z);
+    esRotate(&modelMatrix,
+	     userData->speeds->at(earth_idx)->angle,
+	     userData->speeds->at(earth_idx)->dx,
+	     userData->speeds->at(earth_idx)->dy,
+	     userData->speeds->at(earth_idx)->dz);
+    userData->speeds->at(earth_idx)->nextframe();
+
+    tinyobj::mesh_t mesh = (userData->shapes->at(earth_idx)).mesh;
+	
+    // load the vertex data
+    std::vector<float> pos = mesh.positions;
+    glVertexAttribPointer(userData->positionLoc, 3, GL_FLOAT, GL_FALSE, 0,  &pos.front());
+    glEnableVertexAttribArray(userData->positionLoc);
+
+    // load the normal data
+    std::vector<float> normals= mesh.normals;
+    glVertexAttribPointer(userData->normalLoc, 3, GL_FLOAT,   GL_FALSE, 0,  &normals.front());
+    glEnableVertexAttribArray(userData->normalLoc);
+	
+    // load texCoord data
+    glVertexAttribPointer(userData->texCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, & mesh.texcoords.front());
+    glEnableVertexAttribArray(userData->texCoordLoc);
+
+    // load the MVP matrix
+    glUniformMatrix4fv(
+	glGetUniformLocation(userData->programObject, "uModelMatrix"), 1, false, (GLfloat*)&modelMatrix);
+    glUniformMatrix4fv(
+	glGetUniformLocation(userData->programObject, "uProjectionMatrix"), 1, false, (GLfloat*)perspectMatrix);
+    glUniform1f(
+	glGetUniformLocation(userData->programObject, "u_useLight"),
+	userData->speeds->at(earth_idx)->use_light);
+	
+    /// load the texture
+    // Bind the texture
+    glActiveTexture ( GL_TEXTURE0 );
+    glBindTexture ( GL_TEXTURE_2D, userData->texure );
+	
+    // Set the sampler texture unit to 0
+    glUniform1i ( userData->textUniformLoc, 0 );
+
+    glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, &( mesh.indices.front()));
+}
+
+void drawuniverse(UserData* userData, int universe_idx, const ESMatrix * perspectMatrix)
+{
+    ESMatrix modelMatrix;
+    
+    // model matrix
+    esMatrixLoadIdentity(&modelMatrix);
+
+    esTranslate(&modelMatrix, 0, 0, userData->speeds->at(universe_idx)->translate_z);
+    esRotate(&modelMatrix,
+	     userData->speeds->at(universe_idx)->angle,
+	     userData->speeds->at(universe_idx)->dx,
+	     userData->speeds->at(universe_idx)->dy,
+	     userData->speeds->at(universe_idx)->dz);
+    userData->speeds->at(universe_idx)->nextframe();
+
+    tinyobj::mesh_t mesh = (userData->shapes->at(universe_idx)).mesh;
+	
+    // load the vertex data
+    std::vector<float> pos = mesh.positions;
+    glVertexAttribPointer(userData->positionLoc, 3, GL_FLOAT, GL_FALSE, 0,  &pos.front());
+    glEnableVertexAttribArray(userData->positionLoc);
+
+    // load the normal data
+    std::vector<float> normals= mesh.normals;
+    glVertexAttribPointer(userData->normalLoc, 3, GL_FLOAT,   GL_FALSE, 0,  &normals.front());
+    glEnableVertexAttribArray(userData->normalLoc);
+	
+    // load texCoord data
+    glVertexAttribPointer(userData->texCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, & mesh.texcoords.front());
+    glEnableVertexAttribArray(userData->texCoordLoc);
+
+    // load the MVP matrix
+    glUniformMatrix4fv(
+	glGetUniformLocation(userData->programObject, "uModelMatrix"), 1, false, (GLfloat*)&modelMatrix);
+    glUniformMatrix4fv(
+	glGetUniformLocation(userData->programObject, "uProjectionMatrix"), 1, false, (GLfloat*)perspectMatrix);
+    glUniform1f(
+	glGetUniformLocation(userData->programObject, "u_useLight"),
+	userData->speeds->at(universe_idx)->use_light);
+	
+    /// load the texture
+    // Bind the texture
+    glActiveTexture ( GL_TEXTURE0 );
+    glBindTexture ( GL_TEXTURE_2D, userData->texure );
+	
+    // Set the sampler texture unit to 0
+    glUniform1i ( userData->textUniformLoc, 0 );
+
+    glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, &( mesh.indices.front()));
+}
+
 
 #ifndef SANSHICHUAN_ANDROID_BUILD
 void onSizeChange(ESContext *esContext)
@@ -144,56 +257,59 @@ void onSizeChange(UserData *userData, int vp_width, int vp_height)
 
     // project matirx
     esMatrixLoadIdentity(&perspectMatrix);
-//    printf("%f, %f \n", -userData->frustumX, userData->frustumX);
-    
     esFrustum(&perspectMatrix, -userData->frustumX, userData->frustumX, -userData->frustumY, userData->frustumY, 6, 30);
 
-    
-    for (int i = 0; i < ((userData->shapes->size())); ++i) {
-	// model matrix
-	esMatrixLoadIdentity(&modelMatrix);
+    if (userData->drawearth && userData->drawuniverse && 1) {
+	userData->drawuniverse(userData, userData->universe_idx, &perspectMatrix);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	userData->drawearth(userData, userData->earth_idx, &perspectMatrix);
+    } else {
+	for (int i = 0; i < ((userData->shapes->size())); ++i) {
+	    // model matrix
+	    esMatrixLoadIdentity(&modelMatrix);
 
-	esTranslate(&modelMatrix, 0, 0, userData->speeds->at(i)->translate_z);
-	esRotate(&modelMatrix, userData->speeds->at(i)->angle, userData->speeds->at(i)->dx, userData->speeds->at(i)->dy, userData->speeds->at(i)->dz);
-	userData->speeds->at(i)->nextframe();
+	    esTranslate(&modelMatrix, 0, 0, userData->speeds->at(i)->translate_z);
+	    esRotate(&modelMatrix, userData->speeds->at(i)->angle, userData->speeds->at(i)->dx, userData->speeds->at(i)->dy, userData->speeds->at(i)->dz);
+	    userData->speeds->at(i)->nextframe();
 
-	esMatrixLoadIdentity(&userData->mMVPMatrix);
-	esMatrixMultiply(&userData->mMVPMatrix, &modelMatrix, &perspectMatrix);
+	    esMatrixLoadIdentity(&userData->mMVPMatrix);
+	    esMatrixMultiply(&userData->mMVPMatrix, &modelMatrix, &perspectMatrix);
 
-	tinyobj::mesh_t mesh = (userData->shapes->at(i)).mesh;
+	    tinyobj::mesh_t mesh = (userData->shapes->at(i)).mesh;
 	
-	// load the vertex data
-	std::vector<float> pos = mesh.positions;
-	glVertexAttribPointer(userData->positionLoc, 3, GL_FLOAT, GL_FALSE, 0,  &pos.front());
-	glEnableVertexAttribArray(userData->positionLoc);
+	    // load the vertex data
+	    std::vector<float> pos = mesh.positions;
+	    glVertexAttribPointer(userData->positionLoc, 3, GL_FLOAT, GL_FALSE, 0,  &pos.front());
+	    glEnableVertexAttribArray(userData->positionLoc);
 
-	// load the normal data
-	std::vector<float> normals= mesh.normals;
-	glVertexAttribPointer(userData->normalLoc, 3, GL_FLOAT,   GL_FALSE, 0,  &normals.front());
-	glEnableVertexAttribArray(userData->normalLoc);
+	    // load the normal data
+	    std::vector<float> normals= mesh.normals;
+	    glVertexAttribPointer(userData->normalLoc, 3, GL_FLOAT,   GL_FALSE, 0,  &normals.front());
+	    glEnableVertexAttribArray(userData->normalLoc);
 	
-	// load texCoord data
-	glVertexAttribPointer(userData->texCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, & mesh.texcoords.front());
-	glEnableVertexAttribArray(userData->texCoordLoc);
+	    // load texCoord data
+	    glVertexAttribPointer(userData->texCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, & mesh.texcoords.front());
+	    glEnableVertexAttribArray(userData->texCoordLoc);
 
-	// load the MVP matrix
-	glUniformMatrix4fv(
-	    glGetUniformLocation(userData->programObject, "uModelMatrix"), 1, false, (GLfloat*)&modelMatrix);
-	glUniformMatrix4fv(
-	    glGetUniformLocation(userData->programObject, "uProjectionMatrix"), 1, false, (GLfloat*)&perspectMatrix);
-	glUniform1f(
-	    glGetUniformLocation(userData->programObject, "u_useLight"),
-	    userData->speeds->at(i)->use_light);
+	    // load the MVP matrix
+	    glUniformMatrix4fv(
+		glGetUniformLocation(userData->programObject, "uModelMatrix"), 1, false, (GLfloat*)&modelMatrix);
+	    glUniformMatrix4fv(
+		glGetUniformLocation(userData->programObject, "uProjectionMatrix"), 1, false, (GLfloat*)&perspectMatrix);
+	    glUniform1f(
+		glGetUniformLocation(userData->programObject, "u_useLight"),
+		userData->speeds->at(i)->use_light);
 	
-	/// load the texture
-	// Bind the texture
-	glActiveTexture ( GL_TEXTURE0 );
-	glBindTexture ( GL_TEXTURE_2D, userData->texure );
+	    /// load the texture
+	    // Bind the texture
+	    glActiveTexture ( GL_TEXTURE0 );
+	    glBindTexture ( GL_TEXTURE_2D, userData->texure );
 	
-	// Set the sampler texture unit to 0
-	glUniform1i ( userData->textUniformLoc, 0 );
+	    // Set the sampler texture unit to 0
+	    glUniform1i ( userData->textUniformLoc, 0 );
 
-	glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, &( mesh.indices.front()));
+	    glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, &( mesh.indices.front()));
+	}
     }
 
 #ifndef SANSHICHUAN_ANDROID_BUILD

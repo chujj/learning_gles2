@@ -4,11 +4,16 @@ const static float kFrustumNormal = 500;
 
 #ifndef SANSHICHUAN_ANDROID_BUILD
 namespace {
+void drawearth(UserData* userData, int earth_idx, const ESMatrix * perspectMatrix) ;
+void drawuniverse(UserData* userData, int universe_idx, const ESMatrix * perspectMatrix);
 
 int Init(ESContext *esContext)
 {
     UserData *userData = (UserData *)esContext->userData;
 #else
+void drawearth(UserData* userData, int earth_idx, const ESMatrix * perspectMatrix) ;
+void drawuniverse(UserData* userData, int universe_idx, const ESMatrix * perspectMatrix);
+
 int Init(UserData *userData)
 {
 #endif
@@ -35,6 +40,8 @@ int Init(UserData *userData)
     glDepthFunc(GL_LEQUAL);
     glClearDepthf(1.0f);
     
+    userData->drawearth = drawearth;
+    userData->drawuniverse = drawuniverse;
     
     // STORE the program object
     userData->programObject = programObject;
@@ -332,8 +339,6 @@ int main(int argc, char *argv[])
     userData.texture_png_file = argv[2];
     userData.vert_shader_file = argv[3];
     userData.frag_shader_file = argv[4];
-    userData.drawearth = drawearth;
-    userData.drawuniverse = drawuniverse;
 
     esInitContext(&esContext);
     esContext.userData = &userData;
