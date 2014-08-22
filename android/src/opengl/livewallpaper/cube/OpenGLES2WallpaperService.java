@@ -1,5 +1,7 @@
 package opengl.livewallpaper.cube;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
@@ -19,6 +21,16 @@ public abstract class OpenGLES2WallpaperService extends GLWallpaperService {
 		
 		public final static String ENGINE_TAG = "ENGINE";
 
+		@Override
+		public void onVisibilityChanged(boolean visible) {
+			// ZHUJJ Auto-generated method stub
+			super.onVisibilityChanged(visible);
+			if (visible) {
+				MobclickAgent.onResume(OpenGLES2WallpaperService.this);
+			} else {
+				MobclickAgent.onPause(OpenGLES2WallpaperService.this);
+			}
+		}
 		@Override
 		public void onCreate(SurfaceHolder surfaceHolder) {
 			super.onCreate(surfaceHolder);

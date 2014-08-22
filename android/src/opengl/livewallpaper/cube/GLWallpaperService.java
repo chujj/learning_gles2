@@ -1,5 +1,7 @@
 package opengl.livewallpaper.cube;
 
+import com.umeng.update.UmengUpdateAgent;
+
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
@@ -17,6 +19,7 @@ public abstract class GLWallpaperService extends WallpaperService {
 		@Override
 		public void onCreate(SurfaceHolder surfaceHolder) {
 			super.onCreate(surfaceHolder);
+			UmengUpdateAgent.update(GLWallpaperService.this.getApplicationContext());
 			glSurfaceView = new WallpaperGLSurfaceView(GLWallpaperService.this);
 		}
 		
