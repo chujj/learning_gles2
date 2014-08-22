@@ -32,7 +32,7 @@
     <!-- for umeng end -->
 
     <application
-            android:label="@string/gl2jni_activity">
+            android:label="@string/app_name">
         <activity android:name="com.android.gl2jni.GL2JNIActivity"
                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             	android:launchMode="singleTask"
