@@ -19,7 +19,9 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ssc.software.lpearth">
+    package="ssc.software.lpearth"
+    android:versionCode="1"
+    android:versionName="1.0" >
     
     <!-- for umeng -->
     <uses-permission android:name="android.permission.INTERNET" />
