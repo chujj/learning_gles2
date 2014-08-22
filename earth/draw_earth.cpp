@@ -260,7 +260,7 @@ void onSizeChange(UserData *userData, int vp_width, int vp_height)
     esFrustum(&perspectMatrix, -userData->frustumX, userData->frustumX, -userData->frustumY, userData->frustumY, 6, 30);
 
     if (userData->drawearth && userData->drawuniverse && 1) {
-	userData->drawuniverse(userData, userData->universe_idx, &perspectMatrix);
+//	userData->drawuniverse(userData, userData->universe_idx, &perspectMatrix);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	userData->drawearth(userData, userData->earth_idx, &perspectMatrix);
     } else {
